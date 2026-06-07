@@ -4,11 +4,10 @@ The central hub for grocery store catalogs.
 
 If you can check at least two of the following, this project is for you:
 
-- [] You like to shop items that are on offer.
-- [] You like to check what's on offer before you go to the store.
-- [] You care about privacy.
-- [] You want to use open-source software.
-- [] You use an open-source shopping list app.
+- [ ] You like to shop items that are on offer.
+- [ ] You like to check what's on offer before you go to the store.
+- [ ] You care about privacy.
+- [ ] You want to use open-source software.
 
 ## Mission
 
@@ -48,12 +47,11 @@ current store offers in the major open-source shopping-planning applications.
 
 ## Project Status
 
-*ALPHA*
+*BETA*
 
-- The backend is near stable, with some refactors pending.
+- The backend is stable.
 
 - The provisional webui still needs some polishing.
-  Vital capabilities for managing providers and configs are missing.
 
 - I have added the most relevant german flyer providers,
   other regions must be contributed
@@ -61,15 +59,14 @@ current store offers in the major open-source shopping-planning applications.
 
 ## Roadmap
 
-- Small refactors in the backend
-- More provider classes
 - Setup client libraries and ship them
--
+- Fixes and consolidation
 
 ## Installation
 
-The Cata-Log server is intended to be run
-with the container image provided at [dockerhub][dockerhub].
+The Cata-Log-Hub server is intended to be run
+either with the container image provided at [dockerhub][dockerhub]
+or bare-metal with the [python-package][pypi].
 
 ### Docker
 
@@ -86,9 +83,26 @@ You can use a tool like [kompose](https://kompose.io)
 to translate [the docker compose file](docker/docker-compose.minimal.yml)
 to a kubernetes cluster configuration.
 
+### Bare-Metal
+
+Install the cata-log python package. It requires at least python3.14.
+
+```console
+pip install cata-log-hub
+```
+
+and start the server
+
+```console
+python3 -m cata_log_hub --password=<password>
+```
+
+Configuration is done with the command-line options
+or the environment variables also used for the container deployment.
+
 ### Agentic installation
 
-If you want an agent to install Cata-Log for you,
+If you want an agent to install Cata-Log-Hub for you,
 point it to [the install.md file](install.md), e.g.
 
 ```bash
@@ -109,7 +123,9 @@ The quickstart and guide for implementing a provider class are in the documentat
 Thank you to [everybody who helped with advancing this project](CONTRIBUTORS.md)
 and [who helped with translation](TRANSLATORS.rst)!
 
-## License
+## Legal
+
+### License
 
 This software is proudly released under
 [the GNU Affero General Public License v3.0 or later (AGPLv3) open-source license](LICENSE).
@@ -119,5 +135,24 @@ Its documentation is licensed under
 
 Any contributions will be subject to the same licensing.
 
-[dockerhub]: https://hub.docker.com/r/dacid99/cata-log
+### Disclaimer
+
+This project is intended as a means of unified access
+to the digital flyer services of the various implemented providers.
+
+It is designed with the interest of these companies in mind.
+Strategies to reduce the load on their server infrastructure are one part of this effort.
+
+The explicit goal of this project is not to reduce visits to their webpages
+but to create a consistent and unified interface for all digital flyer services.
+Easing and thus furthering the distribution of these products is the intended effect.
+
+Use of the Cata-Log server and its codebase that is meant to harm individual companies,
+while technically allowed under the license, is heavily discouraged.
+
+This project is aimed at coexistence and cooperation with the companies,
+benefiting both them and the open-source community.
+
+[dockerhub]: https://hub.docker.com/r/dacid99/cata-log-hub
+[pypi]: https://pypi.org/project/cata-log-hub
 [readthedocs]: https://cata-log.readthedocs.io/latest/

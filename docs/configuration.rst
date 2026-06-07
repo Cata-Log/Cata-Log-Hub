@@ -35,7 +35,7 @@ Instead of passing the options via the command line you can set them in the envi
 
     Settings via command line always override any environment configurations.
 
-The names of the environment variables are the names of the corresponding cli options in UPPER_CAMEL_CASE with prefix *CATA_LOG_*.
+The names of the environment variables are the names of the corresponding CLI options in UPPER_CAMEL_CASE with prefix *CATA_LOG_*.
 So for example, *--request-timeout* becomes *CATA_LOG_REQUEST_TIMEOUT* .
 
 This way of configuring Cata-Log is particularly useful in combination with docker.

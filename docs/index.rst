@@ -7,7 +7,11 @@
 Cata-Log Documentation
 ======================
 
-Welcome to the documentation of Cata-Log, the central self-hostable hub for all flyers and catalogs.
+Welcome to the documentation of :doc:`Cata-Log, the central self-hostable hub for all flyers and catalogs <mission-statement>`!
+
+If you're just getting started, check out :doc:`the quickstart <quickstart>`.
+
+For information on how to create a new provider and / or contribute, see the :doc:`the contributing section <contributing>`.
 
 .. toctree::
    :maxdepth: 1
@@ -17,7 +21,8 @@ Welcome to the documentation of Cata-Log, the central self-hostable hub for all 
    installation
    configuration
    plugins
-   contributors
+   usage
+   contributing
    troubleshooting
    faq
    changelog

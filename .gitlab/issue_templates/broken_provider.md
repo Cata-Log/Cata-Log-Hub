@@ -7,7 +7,7 @@ Before you submit this report, please make sure that
 
 - the provider is flagged as broken and may not just be misconfigured
 
-- the provider is still flagged as broken after you force-update it (POST to /api/v1/providers/{provider_id}/update).
+- the provider is still flagged as broken after you force-update it (POST to /api/v1/providers/{provider_id}/job/run).
 
 If these criteria are met, please go ahead and fill out the report.
 The more information you provide the more material we can work with

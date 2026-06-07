@@ -90,8 +90,8 @@ trim_footnote_reference_space = True
 # Options for the nitpicky mode
 
 nitpicky = True
-nitpick_ignore = ()
-nitpick_ignore_regex = []
+nitpick_ignore = [('py:class', 'type')]
+nitpick_ignore_regex = [('py:.*', 'httpx.*')]
 
 # Options for object signatures
 
@@ -124,15 +124,15 @@ pygments_style = "sphinx"
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
 
 autoclass_content = "class"
-autodoc_class_signature = "mixed"
+autodoc_class_signature = "separated"
 autodoc_member_order = "bysource"
 autodoc_default_options = {
     "members": True,
-    "exclude-members": "_abc_impl",
+    "exclude-members": "_abc_impl, _sa_class_manager, _sa_registry",
     "member-order": "bysource",
     "undoc-members": True,
     "private-members": True,
-    "special-members": "__init__, __str__",
+    "special-members": "__init__, __str__, __repr__",
     "show-inheritance": True,
     "inherited-members": False,
 }

@@ -96,7 +96,7 @@ def add_image_providers_to_faker(_session_faker):
     return _session_faker
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def engine():
     engine = create_engine(
         "sqlite:///:memory:",
@@ -113,9 +113,23 @@ def engine():
         engine.dispose()
 
 
+@pytest.fixture(scope="session")
+def connection(engine):
+    with engine.connect() as connection:
+        yield connection
+
+
 @pytest.fixture
-def LocalSession(engine):
-    return orm.sessionmaker(bind=engine)
+def transaction(connection):
+    with connection.begin() as transaction:
+        yield transaction
+
+
+@pytest.fixture
+def LocalSession(connection, transaction):
+    yield orm.sessionmaker(bind=connection)
+
+    transaction.rollback()
 
 
 @pytest.fixture(autouse=True)

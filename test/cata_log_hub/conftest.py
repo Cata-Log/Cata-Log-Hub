@@ -19,8 +19,6 @@
 import os
 import sys
 
-import httpx
-
 sys.argv = [
     "python3 -m cata_log_hub",
 ]
@@ -35,10 +33,14 @@ os.environ["CATA_LOG_LOGS_PATH"] = "/tmp/var/log/cata-log-hub/"
 import base64
 import enum
 from datetime import UTC, datetime, timedelta
+from importlib import resources
 from types import MappingProxyType
 from typing import override
 
+import alembic.command
+import httpx
 import pytest
+from alembic.config import Config
 from faker_file.providers.bmp_file import GraphicBmpFileProvider
 from faker_file.providers.gif_file import GraphicGifFileProvider
 from faker_file.providers.ico_file import GraphicIcoFileProvider
@@ -101,11 +103,13 @@ def engine():
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    database.ModelBase.metadata.create_all(engine)
+    with resources.path("cata_log_hub.migrations", "alembic.ini") as path:
+        alembic_config = Config(path)
+    alembic_config.attributes["connectable"] = engine
+    alembic.command.upgrade(config=alembic_config, revision="head")
     try:
         yield engine
     finally:
-        database.ModelBase.metadata.drop_all(engine)
         engine.dispose()
 
 

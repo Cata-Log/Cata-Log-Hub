@@ -69,7 +69,7 @@ def upgrade() -> None:
                 "HEALTHY",
                 name="provider_status_enum",
             ),
-            server_default="healthy",
+            server_default="HEALTHY",
             nullable=False,
         ),
         sa.Column(

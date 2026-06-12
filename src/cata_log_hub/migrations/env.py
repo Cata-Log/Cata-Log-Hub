@@ -19,6 +19,7 @@
 import sys
 
 sys.path.insert(0, "src/")
+
 from logging.config import fileConfig
 
 from alembic import context

@@ -31,14 +31,9 @@ from apscheduler.triggers.cron import CronTrigger
 from ebooklib import epub
 from PIL import Image
 from sqlalchemy import Enum as SQLEnum
-from sqlalchemy import (
-    ForeignKey,
-    UniqueConstraint,
-    orm,
-)
+from sqlalchemy import orm
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import CheckConstraint, ForeignKey, MetaData, UniqueConstraint
 from sqlalchemy.sql import select
 from sqlalchemy.types import JSON, String, Text
 
@@ -58,8 +53,18 @@ from .types import PathType, UTCDatetime
 logger = logging.getLogger(__name__)
 
 
-class ModelBase(DeclarativeBase):
+class ModelBase(orm.DeclarativeBase):
     """Base for all ORM models."""
+
+    metadata = MetaData(
+        naming_convention={
+            "ix": "ix_%(column_0_label)s",
+            "uq": "uq_%(table_name)s__%(column_0_N_name)s",
+            "ck": "ck_%(table_name)s__%(column_0_name)s_%(constraint_name)s  ",
+            "fk": "fk_%(table_name)s__%(column_0_name)s__%(referred_table_name)s",
+            "pk": "pk_%(table_name)s",
+        }
+    )
 
 
 class Provider(ModelBase, TimestampMixin):
@@ -392,9 +397,13 @@ class PageFile(ModelBase, TimestampMixin):
     path: orm.Mapped[Path] = orm.mapped_column(PathType, unique=True)
     original_sha256: orm.Mapped[str] = orm.mapped_column(String(64))
     sha256: orm.Mapped[str] = orm.mapped_column(String(64))
-    size: orm.Mapped[int] = orm.mapped_column(CheckConstraint("size > 0"))
-    height: orm.Mapped[int] = orm.mapped_column(CheckConstraint("height > 0"))
-    width: orm.Mapped[int] = orm.mapped_column(CheckConstraint("width > 0"))
+    size: orm.Mapped[int] = orm.mapped_column(CheckConstraint("size > 0", name="gt_0"))
+    height: orm.Mapped[int] = orm.mapped_column(
+        CheckConstraint("height > 0", name="gt_0")
+    )
+    width: orm.Mapped[int] = orm.mapped_column(
+        CheckConstraint("width > 0", name="gt_0")
+    )
     pages: orm.Mapped[list[Page]] = orm.relationship(
         back_populates="file",
         passive_deletes="all",  # essential to make ondelete=RESTRICT work: https://stackoverflow.com/questions/55968951/sqlalchemy-fk-ondelete-does-not-restrict
@@ -469,7 +478,9 @@ class Page(ModelBase, TimestampMixin):
     """ORM model for a catalog page."""
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    number: orm.Mapped[int] = orm.mapped_column(CheckConstraint("number >= 0"))
+    number: orm.Mapped[int] = orm.mapped_column(
+        CheckConstraint("number >= 0", name="ge_0")
+    )
     catalog_id: orm.Mapped[int] = orm.mapped_column(
         ForeignKey(Catalog.__tablename__ + ".id", ondelete="CASCADE"), nullable=False
     )

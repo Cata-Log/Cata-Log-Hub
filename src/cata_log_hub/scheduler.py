@@ -17,6 +17,8 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 from datetime import UTC, timedelta
 
 from apscheduler.events import EVENT_JOB_ERROR, JobExecutionEvent
@@ -25,6 +27,7 @@ from apscheduler.job import Job
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.date import DateTrigger
+from fastapi import FastAPI
 
 from cata_log_hub.exceptions import NetworkError
 from cata_log_hub.settings import get_settings
@@ -75,3 +78,11 @@ def retry_on_network_error_listener(event: JobExecutionEvent) -> None:
 
 
 scheduler.add_listener(retry_on_network_error_listener, EVENT_JOB_ERROR)
+
+
+@asynccontextmanager
+async def run_scheduler(app: FastAPI) -> AsyncGenerator[None]:  # noqa: ARG001 # required for lifespan
+    """Controls the scheduler."""
+    scheduler.start()
+    yield
+    scheduler.shutdown()

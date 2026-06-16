@@ -30,6 +30,7 @@ from cata_log_hub import (
     web,
 )
 from cata_log_hub.api import common
+from cata_log_hub.scheduler import run_scheduler
 
 
 def create_fastapi_app() -> FastAPI:
@@ -53,6 +54,7 @@ def create_fastapi_app() -> FastAPI:
         exception_handlers={
             RequestValidationError: common.validation_exception_handler
         },
+        lifespan=run_scheduler,
         title="Cata-Log",
         description="The Central Hub For Grocery Store Catalogs",
         summary="API overview for Cata-Log",

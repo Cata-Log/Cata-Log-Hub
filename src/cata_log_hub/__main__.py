@@ -25,7 +25,6 @@ from alembic.config import Config
 
 if __name__ == "__main__":
     import cata_log_hub.logging
-    import cata_log_hub.scheduler
     from cata_log_hub.settings import get_settings
 
     settings = get_settings()
@@ -36,8 +35,6 @@ if __name__ == "__main__":
         alembic_config = Config(path)
     alembic.command.upgrade(config=alembic_config, revision="head")
 
-    cata_log_hub.scheduler.scheduler.start()
-
     uvicorn.run(
         app="cata_log_hub.app:create_fastapi_app",
         factory=True,
@@ -47,5 +44,4 @@ if __name__ == "__main__":
         log_config=cata_log_hub.logging.UVICORN_LOGGING_CONFIG,
         log_level=settings.log_level,
         reload=settings.dev_mode,
-        workers=settings.workers,
     )

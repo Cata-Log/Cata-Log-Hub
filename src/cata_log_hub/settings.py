@@ -107,9 +107,6 @@ class Settings(BaseSettings):
         default="localhost,127.0.0.1",
         description="Comma separated list of IP Addresses to trust with proxy headers",
     )
-    workers: PositiveInt = Field(
-        default=1, description="Number of webworker processes to run."
-    )
 
     @field_validator("*", mode="after")
     @classmethod

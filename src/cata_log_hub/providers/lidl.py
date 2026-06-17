@@ -52,6 +52,7 @@ class LidlDeutschland(Provider):
 
     subcategory_name = "Aktionsprospekte"
     category_name = "Filial"
+    flyer_name = "Aktion"
     flyer_index = 0
 
     @override
@@ -83,10 +84,17 @@ class LidlDeutschland(Provider):
         )
         if overview_subcategory is None:
             raise CatalogUnavailableWarning
+        flyers = [
+            flyer
+            for flyer in overview_subcategory["flyers"]
+            if self.flyer_name in flyer["name"]
+        ]
         try:
-            flyer_json_url = overview_subcategory["flyers"][self.flyer_index][
-                "flyerJson"
-            ]
+            flyer_data = flyers[self.flyer_index]
+        except IndexError as index_error:
+            raise CatalogUnavailableWarning from index_error
+        try:
+            flyer_json_url = flyer_data["flyerJson"]
         except IndexError as index_error:
             raise CatalogUnavailableWarning from index_error
         self.flyer_json = self._client.get(flyer_json_url).json()

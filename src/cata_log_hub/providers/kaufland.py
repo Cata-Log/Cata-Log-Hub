@@ -52,6 +52,7 @@ class KauflandWoche(Provider):
 
     overview_url_template = "https://endpoints.leaflets.schwarz/v4/overview/?region_id={filial_id}&client_locale=kaufland/{language_code_lower}-{language_code_upper}"
     subcategory_name = "KDZ1"
+    flyer_name = "Prospekt"
     flyer_index = 0
 
     @override
@@ -64,23 +65,29 @@ class KauflandWoche(Provider):
             )
         )
         try:
-            overview_subcategory = next(
-                (
-                    subcategory
-                    for subcategory in overview_response.json()["categories"][0][
-                        "subcategories"
-                    ]
-                    if self.subcategory_name in subcategory["name"]
-                ),
-                None,
-            )
-            if overview_subcategory is None:
-                raise CatalogUnavailableWarning
-            flyer_json_url = overview_subcategory["flyers"][self.flyer_index][
-                "flyerJson"
-            ]
+            category_data = overview_response.json()["categories"][0]
         except IndexError as index_error:
             raise CatalogUnavailableWarning from index_error
+        overview_subcategory = next(
+            (
+                subcategory
+                for subcategory in category_data["subcategories"]
+                if self.subcategory_name in subcategory["name"]
+            ),
+            None,
+        )
+        if overview_subcategory is None:
+            raise CatalogUnavailableWarning
+        flyers = [
+            flyer
+            for flyer in overview_subcategory["flyers"]
+            if self.flyer_name in flyer["name"]
+        ]
+        try:
+            flyer_data = flyers[self.flyer_index]
+        except IndexError as index_error:
+            raise CatalogUnavailableWarning from index_error
+        flyer_json_url = flyer_data["flyerJson"]
         self.flyer_json = self._client.get(flyer_json_url).json()
 
     @override

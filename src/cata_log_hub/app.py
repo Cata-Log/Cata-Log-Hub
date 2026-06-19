@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
-# Cata-Log - the central hub for grocery store catalogs
+# Cata-Log - the central hub for digital flyers
 # Copyright (C) 2026 David Aderbauer & The Cata-Log Contributors
 #
 # This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ def create_fastapi_app() -> FastAPI:
         lifespan=run_scheduler,
         title="Cata-Log",
         description="This API is designed in a semantic fashion. All catalog and page data is made available in a consistent manner.",
-        summary="API overview for Cata-Log, the central hub for grocery store catalogs",
+        summary="API overview for Cata-Log, the central hub for digital flyers",
         version=__version__,
         license_info={
             "name": "AGPL version 3 or later",

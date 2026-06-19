@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 #
-# Cata-Log - the central hub for grocery store catalogs
+# Cata-Log - the central hub for digital flyers
 # Copyright (C) 2026 David Aderbauer & The Cata-Log Contributors
 #
 # This program is free software: you can redistribute it and/or modify

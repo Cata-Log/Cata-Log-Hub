@@ -1,6 +1,6 @@
 # Cata-Log Hub
 
-The central hub for grocery store catalogs.
+The central hub for digital flyers.
 
 If you can check at least two of the following, this project is for you:
 

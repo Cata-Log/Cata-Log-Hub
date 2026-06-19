@@ -11,9 +11,9 @@ To develop for Cata-Log,
 
 1. Clone the git repository with the source code
 
-    .. code-block:: console
+   .. code-block:: console
 
-        git clone https://gitlab.com/cata-log/cata-log-hub.git
+      git clone https://gitlab.com/cata-log/cata-log-hub.git
 
 2. Open the code in your favorite IDE and follow the setup instructions in :doc:`Development.md <development>`.
 3. Read the :doc:`Contributing guidelines <contributing>`.

@@ -34,3 +34,5 @@ That file must also be loaded from a server, so check the traffic again.
 
 In the worst case scenario, if you don't find a feasible way to retrieve the pages with a few http requests,
 you can fallback to requesting the entire flyer page and parse the page image urls from the html.
+
+The guide on :doc:`how to code a provider <how-to-add-provider>` can give you more ideas.

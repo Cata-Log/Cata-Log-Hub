@@ -12,10 +12,10 @@ Quickstart Guide
 - Get `the docker-compose.yml file <https://gitlab.com/cata-log/cata-log-hub/-/blob/main/docker/docker-compose.yml>`_ from the git repository
   and run
 
-    .. code-block:: console
+  .. code-block:: console
 
-        docker compose up -d
+      docker compose up -d
 
-- Then visit `http://localhost:2424/`.
+- Then visit *http://localhost:2424/*.
 
 For a complete installation go to :doc:`the installation page <installation>`.

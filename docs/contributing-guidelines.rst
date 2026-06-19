@@ -4,9 +4,5 @@
    Copyright (C) 2026 David Aderbauer & The Cata-Log Contributors
    Licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
 
-Thank you to everyone who helped advance this project!
-------------------------------------------------------
-
-
-.. include:: ../CONTRIBUTORS.md
+.. include:: ../CONTRIBUTING.md
     :parser: myst_parser.sphinx_

@@ -7,7 +7,6 @@
 Installation
 ============
 
-
 Basic Setup
 -----------
 
@@ -37,19 +36,19 @@ Follow these steps to set up your instance of Cata-Log:
 
 1. Install cata_log_hub from PyPI
 
-    ```bash
-    pip install cata_log
-    ```
+   .. code-block:: console
 
-    See the following section on :ref:`external databases <External Database>` for details on package extras.
+      pip install cata-log-hub
+
+   See the following section on :ref:`external databases <External Database>` for details on package extras.
 
 2. Start the server with
 
-    ```bash
-    python3 -m cata_log_hub --password=<your_password>
-    ```
+   .. code-block:: console
 
-    Don't forget to set a password, otherwise you won't be able to log in.
+      python3 -m cata_log_hub --password=<your_password>
+
+   Don't forget the password, otherwise you won't be able to log in.
 
 3. Open *<server_ip>:2424* to check whether the container started successfully.
 
@@ -69,47 +68,47 @@ External Database
 Cata-Log uses an internal sqlite3 database by default.
 This works fine but has some deficits in terms of concurrency and thread-safety.
 
-If you can please follow the next steps to use an external full-fledged database server instead.
+If you can, please follow the next steps to use an external full-fledged database server instead.
 
 You can pass the URL of a database either by command-line or environment option to be used instead of the internal sqlite database.
 
 .. note::
 
     You can use a database that is also used by another application.
+
     For example if you deploy Cata-Log in the same environment (machine or docker stack) as a shopping-list server,
     you can simply make Cata-Log use the same database container as the main service.
     The two services and their data will not interfere with each other.
 
 Available options are:
 
-- MySQL:
+- MySQL
 
-    .. code-block:: text
+  .. code-block:: text
 
-        mysql+pymysql://<db_username>:<db_password>@<database_ip>:<database_port>/cata-log
+     mysql+pymysql://<db_username>:<db_password>@<database_ip>:<database_port>/cata-log
 
-    Support for MySQL can be installed with the mysql extra
+  Support for MySQL can be installed with the mysql extra
 
-    .. code-block:: console
+  .. code-block:: console
 
-        pip install cata_log_hub[mysql]
+     pip install cata_log_hub[mysql]
 
-    and is always included in the docker image.
+  and is always included in the docker image.
 
-- PostgreSQL:
+- PostgreSQL
 
-    .. code-block:: text
+  .. code-block:: text
 
-        postgresql+pg8000://<db_username>:<db_password>@<database_ip>:<database_port>/cata-log
+     postgresql+pg8000://<db_username>:<db_password>@<database_ip>:<database_port>/cata-log
 
-    Support for MySQL can be installed with the mysql extra
+  Support for MySQL can be installed with the mysql extra
 
-    .. code-block:: console
+  .. code-block:: console
 
-        pip install cata_log_hub[postgres]
+     pip install cata_log_hub[postgres]
 
-    and is always included in the docker image.
-
+  and is always included in the docker image.
 
 .. important::
 
@@ -117,9 +116,9 @@ Available options are:
 
 You can use the docker-compose files for both setups as reference.
 
-Configuration
-^^^^^^^^^^^^^
+Settings
+^^^^^^^^
 
-Your instance can be configured in many details.
+Your instance can be configured in many individual settings.
 
 Refer to :doc:`the configuration page <configuration>` for all details.

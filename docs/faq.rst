@@ -15,12 +15,12 @@ If you have run into a problem hosting Cata-Log, check out the :doc:`troubleshoo
 What's the point of this application?
 -------------------------------------
 
-If you prefer to shop things that are on sale, you likely skim the shops catalog or flyer.
+If you prefer to shop things that are on sale, you likely skim the shop's catalogs or flyers.
 
 Some proprietary shopping list apps (not to be named here) have a feature to read the current flyers in-app.
 This is something that is missing in all the open-source shopping list apps and servers.
 
-One of the reasons for this is that the API of the various providers are obscure and vary strongly.
+One of the reasons for this is that the APIs of the various stores are obscure and vary strongly.
 This makes it hard for developers of the apps to incorporate the catalog and flyer data.
 
 That is exactly where Cata-Log comes in!

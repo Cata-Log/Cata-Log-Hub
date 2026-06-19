@@ -72,8 +72,11 @@ class Provider(abc.ABC):
     def __init__(self, configuration: dict[str, str]) -> None:
         """Constructor for a provider instance.
 
+        Args:
+            configuration: The configuration dictionary for the provider.
+
         Attributes:
-            _configuration: An instance of the :class:`cata_log_hub.base.Provider.Configuration` loaded from :param:`configuration` .
+            _configuration: An instance of the :class:`cata_log_hub.providers.base.Provider.Configuration` loaded from :param:`configuration` .
             _client: HTTPX client instance that throws on every error status and follows redirects.
             _relevant_datetime: The relevant datetime defining the catalog to cache.
         """

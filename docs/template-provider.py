@@ -30,7 +30,7 @@ class TemplateProvider(Provider):
         # Set all configurations values that must be set by the user to be able to cache the desired flyer.
         # You don't need to define this class if your provider class does not required user configuration.
         example_required_config: str = Field(description="This config is required. Its name is just an example. Please provide a description that helps the user find the required value.")
-        exampl_optional_config: str = Field(description="This config is optional. Its name is just an example.", default="0")
+        example_optional_config: str = Field(description="This config is optional. Its name is just an example.", default="0")
         # Define as many configurations as you need.
 
     # The following methods must be implemented.

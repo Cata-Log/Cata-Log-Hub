@@ -56,8 +56,8 @@ def create_fastapi_app() -> FastAPI:
         },
         lifespan=run_scheduler,
         title="Cata-Log",
-        description="The Central Hub For Grocery Store Catalogs",
-        summary="API overview for Cata-Log",
+        description="This API is designed in a semantic fashion. All catalog and page data is made available in a consistent manner.",
+        summary="API overview for Cata-Log, the central hub for grocery store catalogs",
         version=__version__,
         license_info={
             "name": "AGPL version 3 or later",
@@ -69,6 +69,10 @@ def create_fastapi_app() -> FastAPI:
         },
         docs_url="/docs/swagger",
         redoc_url="/docs/redoc",
+        openapi_external_docs={
+            "description": "Documentation",
+            "url": "https://cata-log.readthedocs.org",
+        },
     )
 
     app.add_route(

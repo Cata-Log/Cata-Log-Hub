@@ -18,6 +18,7 @@
 
 from fastapi import Depends, FastAPI, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from cata_log_hub import (
     __version__,
@@ -74,6 +75,7 @@ def create_fastapi_app() -> FastAPI:
         },
         root_path=settings.root_path,
     )
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
     app.mount("/static", static.create_staticfiles_app(), "static")
     app.include_router(api.router)

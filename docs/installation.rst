@@ -19,7 +19,7 @@ Follow these steps to set up your instance of Cata-Log:
 
 1. Get `the docker-compose.yml file <https://gitlab.com/cata-log/cata-log-hub/-/blob/main/docker/docker-compose.yml>`_ from the git repository.
 2. Adapt it to your needs. For details on the environment variables, refer to :doc:`the configuration page <configuration>`.
-   Don't forget to set *CATA_LOG_PASSWORD*, otherwise you won't be able to log in.
+   Don't forget to set *CATA_LOG_PASSWORD* and *CATA_LOG_ALLOWED_HOSTS*, otherwise you won't be able to access the instance or log in.
 3. Deploy the stack any way you wish. Common options are via the command-line
 
    .. code-block:: console
@@ -46,11 +46,11 @@ Follow these steps to set up your instance of Cata-Log:
 
    .. code-block:: console
 
-      python3 -m cata_log_hub --password=<your_password>
+      python3 -m cata_log_hub --password=<your_password> --allowed-hosts=<server_hostname>
 
-   Don't forget the password, otherwise you won't be able to log in.
+   Don't forget the password and allowed_hosts, otherwise you won't be able to access the instance or log in.
 
-3. Open *<server_ip>:2424* to check whether the container started successfully.
+3. Open *<server_hostname>:2424* to check whether the container started successfully.
 
 .. important::
 
@@ -121,7 +121,6 @@ Reverse-Proxy
 
 If you intend to use Cata-Log outside of your local network,
 it is strongly advised that you reverse-proxy.
-There is are two different ways to do that.
 
 (Sub)domain
 :::::::::::

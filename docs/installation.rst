@@ -116,6 +116,51 @@ Available options are:
 
 You can use the docker-compose files for both setups as reference.
 
+Reverse-Proxy
+^^^^^^^^^^^^^
+
+If you intend to use Cata-Log outside of your local network,
+it is strongly advised that you reverse-proxy.
+There is are two different ways to do that.
+
+(Sub)domain
+:::::::::::
+
+This is the standard setup that you probably use for most of your self-hosted applications.
+
+With this setup, Cata-Log will, for example, be available under *https://cata-log.domain.tld*.
+
+Use Nginx, Traeffic or any other webserver of your choice to proxy Cata-Log behind a domain or subdomain.
+To ensure correct redirects, set `forward-allow-ips` to the hostname of the proxy.
+
+Custom location
+:::::::::::::::
+
+Alternatively, you can attach Cata-Log to an existing proxy host under a custom location.
+
+With this setup, Cata-Log will, for example, be available under *https://sub.domain.tld/cata-log*.
+
+You have to set the `root_path` CLI option (or `CATA_LOG_ROOT_PATH` env variable)
+to the path of the custom location for this setup to work correctly.
+To ensure correct redirects, set `forward-allow-ips` to the hostname of the proxy.
+
+For Nginx an exemplary config is
+
+.. code-block:: text
+
+    location /cata-log/ {
+        proxy_pass http://<server_ip>:2424;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+In this example, `root_path` must be set to */cata-log*.
+
+For more details, see `the fastapi docs on this subject <https://fastapi.tiangolo.com/advanced/behind-a-proxy/#redirects-with-https>`_.
+
 Settings
 ^^^^^^^^
 

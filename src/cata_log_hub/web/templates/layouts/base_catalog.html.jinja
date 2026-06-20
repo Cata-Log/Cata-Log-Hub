@@ -64,5 +64,5 @@
 
 {% block scripts %}
     <span id="provider-id" data-id="{{ catalog.provider_id }}"></span>
-    <script src="/static/js/catalog-viewer.js"></script>
+    <script src="{{ url_for('static', path='js/catalog-viewer.js').path }}"></script>
 {% endblock scripts %}

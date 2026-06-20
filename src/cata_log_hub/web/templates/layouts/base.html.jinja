@@ -21,14 +21,12 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="{{ url_for('get_providers_webpage') }}">
+                        <a href="{{ url_for('get_providers_webpage').path }}">
                             <h1>Cata-Log</h1>
                         </a>
                     </li>
                     <li>
-                        <!-- djlint:off J018-->
-                        <a class="contrast" href="/docs">API Overview</a>
-                        <!-- djlint:on -->
+                        <a class="contrast" href="{{ url_for('swagger_ui_html').path }}">API Overview</a>
                     </li>
                 </ul>
                 <ul>
@@ -72,8 +70,8 @@
             </nav>
 
         </footer>
-
-        <script src="/static/js/theme-switcher.js"></script>
+        <script>const root_url={{ request.scope.root_path }}</script>
+        <script src="{{ url_for('static', path='js/theme-switcher.js').path }}"></script>
 
         {% block scripts %}
         {% endblock scripts %}

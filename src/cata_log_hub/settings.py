@@ -104,8 +104,13 @@ class Settings(BaseSettings):
         default=2424, ge=1, le=64435, description="Portnumber for the server"
     )
     forwarded_allow_ips: str = Field(
-        default="localhost,127.0.0.1",
+        default="",
         description="Comma separated list of IP Addresses to trust with proxy headers",
+    )
+    root_path: str = Field(
+        default="",
+        description="The root of the URL paths. Must start with /",
+        pattern=r"^(\/\w.*[^\/])?$",
     )
 
     @field_validator("*", mode="after")

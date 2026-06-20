@@ -41,6 +41,6 @@
 
 
 {% block scripts %}
-    <script src="/static/js/provider-form.js"></script>
-    <script src="/static/js/provider-actions.js"></script>
+    <script src="{{ url_for('static', path='js/provider-form.js').path }}"></script>
+    <script src="{{ url_for('static', path='js/provider-actions.js').path }}"></script>
 {% endblock scripts %}

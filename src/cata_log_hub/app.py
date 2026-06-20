@@ -18,7 +18,6 @@
 
 from fastapi import Depends, FastAPI, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import RedirectResponse
 
 from cata_log_hub import (
     __version__,
@@ -31,6 +30,7 @@ from cata_log_hub import (
 )
 from cata_log_hub.api import common
 from cata_log_hub.scheduler import run_scheduler
+from cata_log_hub.settings import get_settings
 
 
 def create_fastapi_app() -> FastAPI:
@@ -39,6 +39,7 @@ def create_fastapi_app() -> FastAPI:
     Returns:
         The fastapi app.
     """
+    settings = get_settings()
     app = FastAPI(
         dependencies=[Depends(security.verify_credentials)],
         responses={
@@ -67,18 +68,13 @@ def create_fastapi_app() -> FastAPI:
             "name": "Github Repo",
             "url": "https://github.com/cata-log/cata-log-hub.git",
         },
-        docs_url="/docs/swagger",
-        redoc_url="/docs/redoc",
         openapi_external_docs={
             "description": "Documentation",
             "url": "https://cata-log.readthedocs.org",
         },
+        root_path=settings.root_path,
     )
 
-    app.add_route(
-        "/docs",
-        lambda _: RedirectResponse("/docs/swagger", status_code=status.HTTP_302_FOUND),
-    )
     app.mount("/static", static.create_staticfiles_app(), "static")
     app.include_router(api.router)
     app.include_router(web.router)

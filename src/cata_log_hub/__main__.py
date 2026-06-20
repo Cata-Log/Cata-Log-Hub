@@ -41,6 +41,7 @@ if __name__ == "__main__":
         host=str(settings.host),
         port=settings.port,
         forwarded_allow_ips=settings.forwarded_allow_ips,
+        proxy_headers=True,
         log_config=cata_log_hub.logging.UVICORN_LOGGING_CONFIG,
         log_level=settings.log_level,
         reload=settings.dev_mode,

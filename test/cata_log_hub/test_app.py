@@ -42,3 +42,11 @@ def test_openapi(fastapi_app):
     assert len(operation_ids) == len(unique_operation_ids)
     for operation_id in operation_ids:
         assert operation_id
+
+
+def test_unallowed_host(client):
+    client.base_url = "http://illegalhost"
+
+    response = client.get("/")
+
+    assert response.status_code == 400

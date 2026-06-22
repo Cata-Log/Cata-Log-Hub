@@ -148,10 +148,8 @@ def db_session(LocalSession):
         yield db_session
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def started_scheduler():
-    if not scheduler.running:
-        scheduler.start()
     return scheduler
 
 
@@ -189,13 +187,13 @@ def public_get(monkeypatch):
 
 
 @pytest.fixture
-def fastapi_app():
+def fastapi_app(monkeypatch):
     return create_fastapi_app()
 
 
 @pytest.fixture
 def noauth_client(fake_credentials, fastapi_app):
-    with TestClient(fastapi_app) as noauth_client:
+    with TestClient(fastapi_app, base_url="http://localhost") as noauth_client:
         yield noauth_client
 
 

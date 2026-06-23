@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+<link href="/opds/"
+      rel="start"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<link href="{{ request.url.path }}"
+      rel="self"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<updated>{{ timestamp }}</updated>
+<id>root</id>
+<title>Cata-Log Library</title>
+<author>
+<name>Cata-Log</name>
+<uri>{{ request.url.scheme }}://{{ request.url.netloc }}</uri>
+</author>
+<entry>
+<id>latest</id>
+<title>Latest</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/latest/"
+      rel="http://opds-spec.org/sort/new"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+<content type="text">The latest catalogs</content>
+</entry>
+<entry>
+<id>all</id>
+<title>All</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/all/"
+      rel="subsection"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+<content type="text">All catalogs</content>
+</entry>
+<entry>
+<id>current</id>
+<title>Current</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/current/"
+      rel="subsection"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+<content type="text">All current catalogs</content>
+</entry>
+<entry>
+<id>latest</id>
+<title>Previews</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/previews/"
+      rel="subsection"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+<content type="text">All preview catalogs</content>
+</entry>
+<entry>
+<id>outdated</id>
+<title>Outdated</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/outdated/"
+      rel="subsection"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+<content type="text">All outdated catalogs</content>
+</entry>
+<entry>
+<id>latest</id>
+<title>Provider Overview</title>
+<updated>{{ timestamp }}</updated>
+<link href="/opds/providers/"
+      rel="subsection"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<content type="text">Catalogs grouped by provider</content>
+</entry>
+</feed>

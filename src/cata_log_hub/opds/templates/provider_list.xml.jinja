@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+<link href="/opds/"
+      rel="start"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<link href="/opds/"
+      rel="up"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<link href="{{ request.url.path }}?page={{ paginated_providers.page }}"
+      rel="self"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+{% if paginated_providers.page > 1 %}
+    <link href="{{ request.url.path }}?page={{ paginated_providers.page - 1 }}"
+          rel="previous"
+          type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+    <link href="{{ request.url.path }}?page=1"
+          rel="first"
+          type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+{% endif %}
+{% if paginated_providers.page < paginated_providers.pages %}
+    <link href="{{ request.url.path }}?page={{ paginated_providers.page + 1 }}"
+          rel="next"
+          type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+    <link href="{{ request.url.path }}?page={{ paginated_providers.pages }}"
+          rel="last"
+          type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+{% endif %}
+
+
+<updated>{{ timestamp }}</updated>
+<id>providers</id>
+<title>Catalog Providers Library</title>
+<author>
+<name>Cata-Log</name>
+<uri>{{ request.url.scheme }}://{{ request.url.netloc }}</uri>
+</author>
+
+{% for provider in paginated_providers.items %}
+    {% set provider_class = provider.get_provider_class() %}
+    <entry>
+    <id>provider-{{ provider.id }}</id>
+    <title>{{ provider.class_uid | title }}</title>
+    <updated>{{ timestamp }}</updated>
+    <summary>{{ provider_class.description }}</summary>
+    <language>{{ provider_class.region.language_code }}</language>
+    <link href="/opds/providers/{{ provider.id }}"
+          rel="subsection"
+          type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+    </entry>
+{% else %}
+    <entry />
+{% endfor %}
+</feed>

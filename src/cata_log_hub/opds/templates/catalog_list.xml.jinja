@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+<link href="/opds/"
+      rel="start"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<link href="/opds/"
+      rel="up"
+      type="application/atom+xml;profile=opds-catalog;kind=navigation" />
+<link href="{{ request.url.path }}?page={{ paginated_catalogs.page }}"
+      rel="self"
+      type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+{% if paginated_catalogs.page > 1 %}
+    <link href="{{ request.url.path }}?page={{ paginated_catalogs.page - 1 }}"
+          rel="previous"
+          type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+    <link href="{{ request.url.path }}?page=1"
+          rel="first"
+          type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+{% endif %}
+{% if paginated_catalogs.page < paginated_catalogs.pages %}
+    <link href="{{ request.url.path }}?page={{ paginated_catalogs.page + 1 }}"
+          rel="next"
+          type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+    <link href="{{ request.url.path }}?page={{ paginated_catalogs.pages }}"
+          rel="last"
+          type="application/atom+xml;profile=opds-catalog;kind=acquisition" />
+{% endif %}
+
+<updated>{{ timestamp }}</updated>
+<id>catalogs</id>
+<title>{{ title }}</title>
+<author>
+<name>Cata-Log</name>
+<uri>{{ request.url.scheme }}://{{ request.url.netloc }}</uri>
+</author>
+{% for catalog in paginated_catalogs.items %}
+    {% set provider_class = catalog.provider.get_provider_class() %}
+    <entry>
+    <id>catalog-{{ catalog.id }}</id>
+    <title>
+        {{ provider_class.name | title }} {{ catalog.valid_since.date() }} - {{ catalog.valid_until.date() }}
+    </title>
+    <dc:publisher>{{ catalog.provider.class_uid | title }}</dc:publisher>
+    <dc:issued>{{ catalog.provider.created_at.date().isoformat() }}</dc:issued>
+    <updated>{{ catalog.updated_at.isoformat(timespec="seconds") }}</updated>
+    <summary>{{ provider_class.description }}</summary>
+    <language>{{ provider_class.region.language_code }}</language>
+    <link href="/opds/{{ catalog.id }}.epub"
+          rel="http://opds-spec.org/acquisition"
+          type="application/epub+zip" />
+    <link href="/api/v1/catalogs/{{ catalog.id }}/download"
+          rel="http://opds-spec.org/acquisition"
+          type="application/pdf" />
+    <link href="/catalogs/{{ catalog.id }}/" rel="alternate" type="text/html" />
+    {% if catalog.pages %}
+        <link rel="http://opds-spec.org/image/thumbnail"
+              href="/api/v1/pages/{{ catalog.pages[0].id }}/embed"
+              type="image/jpeg" />
+        <link rel="http://opds-spec.org/image"
+              href="/api/v1/pages/{{ catalog.pages[0].id }}/embed"
+              type="image/webp" />
+    {% endif %}
+    </entry>
+{% else %}
+    <entry />
+{% endfor %}
+
+
+</feed>

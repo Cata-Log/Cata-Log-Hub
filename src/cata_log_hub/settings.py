@@ -19,10 +19,12 @@
 import functools
 from ipaddress import IPv4Address
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from platformdirs import user_data_path, user_log_path
 from pydantic import Field, IPvAnyAddress, NonNegativeInt, PositiveInt, field_validator
+from pydantic.fields import ComputedFieldInfo, FieldInfo
+from pydantic.networks import MySQLDsn, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -30,6 +32,7 @@ class Settings(BaseSettings):
     """Configuration for the Cata-Log server. You can configure the settings with these command-line arguments or environment variables starting with *CATA_LOG_*."""
 
     model_config = SettingsConfigDict(
+        env_file=".env",
         env_prefix="CATA_LOG_",
         cli_kebab_case=True,
         cli_parse_args=True,
@@ -61,7 +64,7 @@ class Settings(BaseSettings):
         default=user_log_path("cata-log-hub", appauthor=False, ensure_exists=False),
         description="Path to the logfiles.",
     )
-    external_database_url: str = Field(
+    external_database_url: PostgresDsn | MySQLDsn | Literal[""] = Field(
         default="",
         description="URL of an external database. Only set this is you want to use an external database.",
     )

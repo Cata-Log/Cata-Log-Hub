@@ -97,8 +97,15 @@ and start the server
 python3 -m cata_log_hub --password=<password>
 ```
 
-Configuration is done with the command-line options
-or the environment variables also used for the container deployment.
+You can get an overview over all CLI options with
+
+```console
+python3 -m cata_log_hub --help
+```
+
+Configuration is done with the command-line options,
+environment variables or .env file.
+
 
 ### Agentic installation
 

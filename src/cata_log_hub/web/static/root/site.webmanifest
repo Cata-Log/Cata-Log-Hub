@@ -1,6 +1,13 @@
 {
   "name": "Cata-Log",
   "short_name": "Cata-Log",
+  "description": "The central hub for digital flyers",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "any",
+  "status_bar": "default",
+  "dir": "ltr",
+  "lang": "en",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

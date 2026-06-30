@@ -24,6 +24,17 @@
         <meta name="apple-mobile-web-app-title" content="Cata-Log" />
         <link rel="manifest"
               href="{{ url_for('static', path='site.webmanifest').path }}" />
+        <script type="text/javascript">
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('{{ url_for("static", path="serviceworker.js").path }}', {
+                    scope: '/'
+                }).then(function (registration) {
+                    console.debug("Service worker registered")
+                }, function (err) {
+                    console.error("Service worker registration failed", err)
+                });
+            }
+        </script>
         <title>Cata-Log
 
             {% block page_title %}
@@ -85,7 +96,7 @@
             </nav>
 
         </footer>
-        <script>const root_url={{ request.scope.root_path }}</script>
+        <script>const root_url="{{ request.scope.root_path }}"</script>
         <script src="{{ url_for('static', path='js/theme-switcher.js').path }}"></script>
 
         {% block scripts %}

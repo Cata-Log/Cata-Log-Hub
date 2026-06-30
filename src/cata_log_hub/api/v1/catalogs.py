@@ -21,13 +21,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Path, Query, status
 from fastapi.responses import FileResponse, Response
+from fastapi_filter.base.filter import FilterDepends
 from fastapi_pagination.ext.sqlalchemy import paginate
 from pydantic.types import NonNegativeInt
 from sqlalchemy.orm import Session, selectinload
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, select
 
 from cata_log_hub import database
 from cata_log_hub.api import common
+from cata_log_hub.api.v1.filters import CatalogFilter, PageFilter
 
 from . import models
 from .pagination import PaginationPage
@@ -39,19 +41,17 @@ router = APIRouter(prefix="/catalogs", tags=["catalogs"])
     "", response_model=PaginationPage[models.Catalog], operation_id="list-catalogs-v1"
 )
 def list_catalogs(
-    order: Annotated[
-        list[models.CatalogOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all catalogs."""
     return paginate(
-        db_session.query(database.Catalog)
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog).options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -61,12 +61,7 @@ def list_catalogs(
     operation_id="list-latest-catalogs-v1",
 )
 def list_latest_catalogs(
-    order: Annotated[
-        list[models.CatalogOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List the latest catalog for every provider."""
@@ -80,10 +75,14 @@ def list_latest_catalogs(
         .label("rn"),
     ).subquery()
     return paginate(
-        db_session.query(database.Catalog)
-        .join(subquery, database.Catalog.id == subquery.c.id)
-        .filter(subquery.c.rn == 1)
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .join(subquery, database.Catalog.id == subquery.c.id)
+                .filter(subquery.c.rn == 1)
+            )
+        ),
     )
 
 
@@ -93,20 +92,19 @@ def list_latest_catalogs(
     operation_id="list-preview-catalogs-v1",
 )
 def list_previews_catalogs(
-    order: Annotated[
-        list[models.CatalogOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all preview catalogs."""
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.valid_since >= datetime.now(tz=UTC))
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.valid_since >= datetime.now(tz=UTC))
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -116,22 +114,21 @@ def list_previews_catalogs(
     operation_id="list-current-catalogs-v1",
 )
 def list_current_catalogs(
-    order: Annotated[
-        list[models.CatalogOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all current catalogs."""
     now = datetime.now(tz=UTC)
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.valid_since <= now)
-        .filter(database.Catalog.valid_until > now)
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.valid_since <= now)
+                .filter(database.Catalog.valid_until > now)
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -141,20 +138,19 @@ def list_current_catalogs(
     operation_id="list-outdated-catalogs-v1",
 )
 def list_outdated_catalogs(
-    order: Annotated[
-        list[models.CatalogOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all outdated catalogs."""
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.valid_until < datetime.now(tz=UTC))
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.valid_until < datetime.now(tz=UTC))
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -261,19 +257,17 @@ def embed_catalog(
 )
 def list_catalog_pages(
     catalog_id: Annotated[int, Path(description="ID of the catalog")],
-    order: Annotated[
-        list[models.PageOrderChoices],
-        Query(description="Fields to order by"),
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.PageOrderChoices.NUMBER
-    ],
+    page_filter: CatalogFilter = FilterDepends(PageFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Page]:
     """Get catalog pages."""
     return paginate(
-        db_session.query(database.Page)
-        .filter(database.Page.catalog_id == catalog_id)
-        .order_by(*[order_param.sql(database.Page) for order_param in order])
+        db_session,
+        page_filter.sort(
+            page_filter.filter(
+                select(database.Page).filter(database.Page.catalog_id == catalog_id)
+            )
+        ),
     )
 
 

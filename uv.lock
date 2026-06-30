@@ -150,6 +150,7 @@ dependencies = [
     { name = "ebooklib" },
     { name = "fake-useragent" },
     { name = "fastapi", extra = ["standard-no-fastapi-cloud-cli"] },
+    { name = "fastapi-filter" },
     { name = "fastapi-pagination" },
     { name = "pillow" },
     { name = "platformdirs" },
@@ -229,6 +230,7 @@ requires-dist = [
     { name = "ebooklib", specifier = ">=0.20,<1.0" },
     { name = "fake-useragent", specifier = ">=2.2.0,<3.0.0" },
     { name = "fastapi", extras = ["standard-no-fastapi-cloud-cli"], specifier = ">=0.135.1,<1.0.0" },
+    { name = "fastapi-filter", specifier = ">=3.0.0,<4.0.0" },
     { name = "fastapi-pagination", specifier = ">=0.15.13,<1.0.0" },
     { name = "pg8000", marker = "extra == 'postgres'", specifier = ">=1.31.5,<2.0.0" },
     { name = "pillow", specifier = ">=12.1.1,<13.0.0" },
@@ -631,6 +633,19 @@ wheels = [
 [package.optional-dependencies]
 standard-no-fastapi-cloud-cli = [
     { name = "uvicorn", extra = ["standard"] },
+]
+
+[[package]]
+name = "fastapi-filter"
+version = "3.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d5/e9/cd52fa0d71adb81ac69b3ffce1c5155e6afd8434e1f021666c8edabf16cc/fastapi_filter-3.0.0.tar.gz", hash = "sha256:afdea1347c9bb61d7c1102d5ee1f5308810bfa7e08aa8d7f3cc3f3d258e24507", size = 9803, upload-time = "2026-06-03T15:51:47.77Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e3/e2/710f4e50ce083d53ae840078d750f062e158a78c97d1e380915e2860d35e/fastapi_filter-3.0.0-py3-none-any.whl", hash = "sha256:0b4f39ba94b51134d441cdac61d1d7f6a86e51cb662c4aa47854b5db7bfdd5c5", size = 11125, upload-time = "2026-06-03T15:51:46.973Z" },
 ]
 
 [[package]]

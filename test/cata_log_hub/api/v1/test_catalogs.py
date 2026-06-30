@@ -23,21 +23,38 @@ from urllib.parse import urljoin
 import pytest
 from pypdf import PdfReader
 
+from cata_log_hub import database
 from cata_log_hub.api import common
-from cata_log_hub.api.v1 import models
+from cata_log_hub.api.v1 import filters, models
 
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.CatalogOrderChoices],
+    [field.key for field in database.Catalog.__table__.columns.values()],
 )
-def test_list_catalogs(full_database, client, order):
+def test_list_catalogs__order(full_database, client, order):
     response = client.get("/api/v1/catalogs", params={"order": order})
 
     assert response.status_code == 200
     data = response.json()
     assert "results" in data
     assert len(data["results"]) == 3
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_catalogs__filter(full_database, client, query_key):
+    response = client.get("/api/v1/catalogs", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_catalogs__noauth(full_database, noauth_client):
@@ -66,9 +83,9 @@ def test_list_catalogs__noauth__public_get(full_database, noauth_client, public_
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.CatalogOrderChoices],
+    [field.key for field in database.Catalog.__table__.columns.values()],
 )
-def test_list_latest_catalogs(full_database, fake_latest_catalog, client, order):
+def test_list_latest_catalogs__order(full_database, fake_latest_catalog, client, order):
     response = client.get("/api/v1/catalogs/latest", params={"order": order})
 
     assert response.status_code == 200
@@ -77,6 +94,24 @@ def test_list_latest_catalogs(full_database, fake_latest_catalog, client, order)
     assert len(data["results"]) == 1
     assert data["results"][0]
     assert data["results"][0]["id"] == fake_latest_catalog.id
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_latest_catalogs__filter(
+    full_database, fake_latest_catalog, client, query_key
+):
+    response = client.get("/api/v1/catalogs/latest", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_latest_catalogs__noauth(full_database, noauth_client):
@@ -112,9 +147,11 @@ def test_list_latest_catalogs__noauth__public_get(
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.CatalogOrderChoices],
+    [field.key for field in database.Catalog.__table__.columns.values()],
 )
-def test_list_previews_catalogs(full_database, fake_catalog_preview, client, order):
+def test_list_previews_catalogs__order(
+    full_database, fake_catalog_preview, client, order
+):
     response = client.get("/api/v1/catalogs/previews", params={"order": order})
 
     assert response.status_code == 200
@@ -123,6 +160,24 @@ def test_list_previews_catalogs(full_database, fake_catalog_preview, client, ord
     assert len(data["results"]) == 1
     assert data["results"][0]
     assert data["results"][0]["id"] == fake_catalog_preview.id
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_previews_catalogs__filter(
+    full_database, fake_catalog_preview, client, query_key
+):
+    response = client.get("/api/v1/catalogs/previews", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_previews_catalogs__noauth(full_database, noauth_client):
@@ -158,9 +213,11 @@ def test_list_previews_catalogs__noauth__public_get(
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.CatalogOrderChoices],
+    [field.key for field in database.Catalog.__table__.columns.values()],
 )
-def test_list_current_catalogs(full_database, fake_catalog_current, client, order):
+def test_list_current_catalogs__order(
+    full_database, fake_catalog_current, client, order
+):
     response = client.get("/api/v1/catalogs/current", params={"order": order})
 
     assert response.status_code == 200
@@ -169,6 +226,24 @@ def test_list_current_catalogs(full_database, fake_catalog_current, client, orde
     assert len(data["results"]) == 1
     assert data["results"][0]
     assert data["results"][0]["id"] == fake_catalog_current.id
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_current_catalogs__filter(
+    full_database, fake_catalog_current, client, query_key
+):
+    response = client.get("/api/v1/catalogs/current", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_current_catalogs__noauth(full_database, noauth_client):
@@ -204,9 +279,11 @@ def test_list_current_catalogs__noauth__public_get(
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.CatalogOrderChoices],
+    [field.key for field in database.Catalog.__table__.columns.values()],
 )
-def test_list_outdated_catalogs(full_database, fake_catalog_outdated, client, order):
+def test_list_outdated_catalogs__order(
+    full_database, fake_catalog_outdated, client, order
+):
     response = client.get("/api/v1/catalogs/outdated", params={"order": order})
 
     assert response.status_code == 200
@@ -215,6 +292,24 @@ def test_list_outdated_catalogs(full_database, fake_catalog_outdated, client, or
     assert len(data["results"]) == 1
     assert data["results"][0]
     assert data["results"][0]["id"] == fake_catalog_outdated.id
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_outdated_catalogs__filter(
+    full_database, fake_catalog_outdated, client, query_key
+):
+    response = client.get("/api/v1/catalogs/outdated", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_outdated_catalogs__noauth(full_database, noauth_client):
@@ -336,9 +431,9 @@ def test_get_catalog_page__noauth__public_get(
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.PageOrderChoices],
+    [field.key for field in database.Page.__table__.columns.values()],
 )
-def test_list_catalog_pages(fake_catalog, fake_page, client, order):
+def test_list_catalog_pages__order(fake_catalog, fake_page, client, order):
     response = client.get(
         f"/api/v1/catalogs/{fake_catalog.id}/pages", params={"order": order}
     )
@@ -348,6 +443,24 @@ def test_list_catalog_pages(fake_catalog, fake_page, client, order):
     assert "results" in data
     assert len(data["results"]) == 1
     assert data["results"][0]["id"] == fake_page.id
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_catalog_pages__filter(fake_catalog, fake_page, client, query_key):
+    response = client.get(
+        f"/api/v1/catalogs/{fake_catalog.id}/pages", params={query_key: "1"}
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_catalog_pages__noauth(fake_catalog, noauth_client):

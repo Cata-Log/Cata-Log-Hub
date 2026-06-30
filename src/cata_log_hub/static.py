@@ -33,16 +33,23 @@ def create_staticfiles_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(openapi_url=None)
 
-    app.mount(
-        "/pages",
-        StaticFiles(directory=settings.storage_path),
-        name="static-pages",
-    )
+    # order is crucial here!
     with resources.path("cata_log_hub.web", "static/js") as path:
         app.mount(
             "/js",
             StaticFiles(directory=path),
             name="static-js",
+        )
+    app.mount(
+        "/pages",
+        StaticFiles(directory=settings.storage_path),
+        name="static-pages",
+    )
+    with resources.path("cata_log_hub.web", "static/root") as path:
+        app.mount(
+            "/",
+            StaticFiles(directory=path),
+            name="static-root",
         )
 
     return app

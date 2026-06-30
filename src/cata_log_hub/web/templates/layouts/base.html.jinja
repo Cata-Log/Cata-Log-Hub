@@ -9,6 +9,21 @@
         <meta name="license" content="AGPLv3" />
         <link rel="stylesheet"
               href="https://unpkg.com/@digicreon/mucss/dist/mu.orange.css" />
+        <link rel="icon"
+              type="image/png"
+              href="{{ url_for('static', path='favicon-96x96.png').path }}"
+              sizes="96x96" />
+        <link rel="icon"
+              type="image/svg+xml"
+              href="{{ url_for('static', path='favicon.svg').path }}" />
+        <link rel="shortcut icon"
+              href="{{ url_for('static', path='favicon.ico').path }}" />
+        <link rel="apple-touch-icon"
+              sizes="180x180"
+              href="{{ url_for('static', path='apple-touch-icon.png').path }}" />
+        <meta name="apple-mobile-web-app-title" content="Cata-Log" />
+        <link rel="manifest"
+              href="{{ url_for('static', path='site.webmanifest').path }}" />
         <title>Cata-Log
 
             {% block page_title %}

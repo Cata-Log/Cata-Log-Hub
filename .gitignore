@@ -138,3 +138,5 @@ var/
 venv/
 wheels/
 xcuserdata/
+# whitelist
+!src/cata_log_hub/web/static/root/*

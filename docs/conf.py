@@ -113,8 +113,8 @@ html_theme_options = asdict(theme_options)
 
 html_title = "Cata-Log Docs"
 html_short_title = "Cata-Log Docs"
-html_logo = ""
-html_favicon = ""
+html_logo = "../src/cata_log_hub/web/static/root/favicon.svg"
+html_favicon = "../src/cata_log_hub/web/static/root/favicon.ico"
 html_static_path = ["_static"]
 html_last_updated_fmt = ""
 html_show_sourcelink = True

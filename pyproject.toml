@@ -1,6 +1,6 @@
 [project]
 name = "cata-log-hub"
-version = "0.1.0"
+version = "0.2.0"
 description = "The central hub for digital flyers"
 authors = [
     {name = "David Aderbauer & The Cata-Log Contributors", email = "no@email.org"}

@@ -23,7 +23,6 @@ from typing import Any, Literal
 
 from platformdirs import user_data_path, user_log_path
 from pydantic import Field, IPvAnyAddress, NonNegativeInt, PositiveInt, field_validator
-from pydantic.fields import ComputedFieldInfo, FieldInfo
 from pydantic.networks import MySQLDsn, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

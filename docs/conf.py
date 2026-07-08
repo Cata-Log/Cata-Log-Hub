@@ -108,13 +108,16 @@ from sphinxawesome_theme import ThemeOptions
 
 html_theme = "sphinxawesome_theme"
 html_permalinks_icon = Icons.permalinks_icon
-theme_options = ThemeOptions(show_scrolltop=True)
+theme_options = ThemeOptions(
+    show_scrolltop=True,
+    logo_light="../src/cata_log_hub/web/static/root/favicon.svg",
+    logo_dark="../src/cata_log_hub/web/static/root/favicon_dark.svg"
+)
 html_theme_options = asdict(theme_options)
 
 html_title = "Cata-Log Docs"
 html_short_title = "Cata-Log Docs"
-html_logo = "../src/cata_log_hub/web/static/root/favicon.svg"
-html_favicon = "../src/cata_log_hub/web/static/root/favicon.ico"
+html_favicon = "../src/cata_log_hub/web/static/root/favicon.svg"
 html_static_path = ["_static"]
 html_last_updated_fmt = ""
 html_show_sourcelink = True

@@ -24,8 +24,5 @@ services:
       - CATA_LOG_DEV_MODE= # set this only in development
       - CATA_LOG_FORWARDED_ALLOW_IPS= # set this if you proxy
       - CATA_LOG_ROOT_PATH= # set this if you proxy with a custom location, must start with /
-      - CATA_LOG_ALLOWED_HOSTS="127.0.0.1,localhost"
+      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost"] # hostnames that are allowed to serve this instance
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy

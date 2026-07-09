@@ -11,5 +11,5 @@ services:
       - 2424:8000
     environment:
       - CATA_LOG_PASSWORD=SafE_pAs5w0rd # setting no password makes authentication impossible #gitleaks:allow
-      - CATA_LOG_ALLOWED_HOSTS="127.0.0.1,localhost"
+      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost"] # hostnames that are allowed to serve this instance
     restart: unless-stopped

@@ -29,6 +29,7 @@ services:
       - 2424:8000
     environment:
       - CATA_LOG_PASSWORD=testwithdb1234 # gitleaks:allow
+      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost"]
       - CATA_LOG_EXTERNAL_DATABASE_URL=mysql+pymysql://user:db_passwd@db/cata-log
     restart: unless-stopped
     depends_on:

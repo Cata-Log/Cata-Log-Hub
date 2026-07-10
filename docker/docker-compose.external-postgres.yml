@@ -3,8 +3,8 @@ services:
     image: postgres:latest
     container_name: cata-log-db
     volumes:
-      - /path/to/cata-log-hub/postgres/:/var/lib/postgresql/
-      - /path/to/cata-log-hub/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - cata-log-db-data:/var/lib/postgresql/
+      - cata-log-db-init:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_DB=cata-log # must match cata-log-hub:DATABASE_NAME
       - POSTGRES_USER=user # must match cata-log-hub:DATABASE_USER
@@ -24,9 +24,9 @@ services:
     image: cata-log-hub:latest
     container_name: cata-log
     volumes:
-      - /path/to/cata-log-hub/storage:/mnt/storage
-      - /path/to/cata-log-hub/log:/var/log/cata-log
-      - /path/to/cata-log-hub/plugins:/mnt/plugins
+      - cata-log-storage:/mnt/storage
+      - cata-log-logs:/var/log/cata-log
+      - cata-log-plugins:/mnt/plugins
     ports:
       - 2424:8000
     environment:
@@ -37,3 +37,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  cata-log-storage:
+  cata-log-db-data:
+  cata-log-db-init:
+  cata-log-logs:
+  cata-log-plugins:

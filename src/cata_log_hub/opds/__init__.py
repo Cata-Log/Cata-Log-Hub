@@ -47,7 +47,7 @@ class PaginationParams(Params):
 
 
 set_page(
-    CustomizedPage[
+    CustomizedPage[  # type: ignore [arg-type] # fastapi-pagination uses some weird typing features
         Page,
         UseParams(PaginationParams),
     ]

@@ -31,7 +31,7 @@ services:
       - 2424:8000
     environment:
       - CATA_LOG_PASSWORD=testwithdb1234 # gitleaks:allow
-      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost"]
+      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost", "0.0.0.0"] # hostnames that are allowed to serve this instance, must include 0.0.0.0 for healthcheck to work
       - CATA_LOG_EXTERNAL_DATABASE_URL=postgresql+pg8000://user:db_passwd@db/cata-log
     restart: unless-stopped
     depends_on:

@@ -115,8 +115,8 @@ class Settings(BaseSettings):
         pattern=r"^(\/\w.*[^\/])?$",
     )
     allowed_hosts: list[str] = Field(
-        default=["127.0.0.1", "localhost"],
-        description="Comma separated list of hostnames to allow",
+        default=["127.0.0.1", "localhost", "0.0.0.0"],  # noqa: S104  # required for docker
+        description="Comma separated list of hostnames to allow.",
     )
 
     @field_validator("*", mode="after")

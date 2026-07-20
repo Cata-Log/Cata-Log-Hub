@@ -1,4 +1,21 @@
-import enum
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Cata-Log - the central hub for digital flyers
+# Copyright (C) 2026 David Aderbauer & The Cata-Log Contributors
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
@@ -10,30 +27,14 @@ from pydantic.types import AwareDatetime, NonNegativeInt, PositiveInt, StringCon
 from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import ValidationInfo
 from pydantic_extra_types.cron import CronStr
-from sqlalchemy import sql
 
 from cata_log_hub import constants
 from cata_log_hub.api.mixins import AwareDatetimesMixin
-from cata_log_hub.database import ModelBase
 from cata_log_hub.exceptions import (
     ProviderInvalidConfigurationWarning,
     ProviderUnknownClassWarning,
 )
 from cata_log_hub.providers import Provider as ProviderType
-
-
-class OrderChoices(enum.StrEnum):
-    """Enum subclass for ordering with sql."""
-
-    def sql(self, model: type[ModelBase]) -> sql.ColumnExpressionArgument:
-        """Translate into sql.
-
-        Returns:
-            SQL expression for proper ordering by the string.
-        """
-        if self.value.startswith("-"):
-            return getattr(model, self.value[1:]).desc()
-        return getattr(model, self.value)
 
 
 class AwareTimestampsMixin(AwareDatetimesMixin):
@@ -50,21 +51,6 @@ class Catalog(AwareTimestampsMixin, BaseModel):
     provider_id: int
     valid_since: AwareDatetime
     valid_until: AwareDatetime
-
-
-class CatalogOrderChoices(OrderChoices):
-    """Choices for ordering catalogs."""
-
-    ID = "id"
-    VALID_SINCE = "valid_since"
-    VALID_UNTIL = "valid_until"
-    CREATED_AT = "created_at"
-    UPDATED_AT = "updated_at"
-    DESC_ID = "-id"
-    DESC_VALID_SINCE = "-valid_since"
-    DESC_VALID_UNTIL = "-valid_until"
-    DESC_CREATED_AT = "-created_at"
-    DESC_UPDATED_AT = "-updated_at"
 
 
 class FullCatalog(Catalog):
@@ -93,21 +79,6 @@ class Page(AwareTimestampsMixin, BaseModel):
     number: NonNegativeInt
     catalog_id: int
     file: PageFile
-
-
-class PageOrderChoices(OrderChoices):
-    """Choices for ordering pages."""
-
-    ID = "id"
-    NUMBER = "number"
-    CATALOG_ID = "catalog_id"
-    CREATED_AT = "created_at"
-    UPDATED_AT = "updated_at"
-    DESC_ID = "-id"
-    DESC_NUMBER = "-number"
-    DESC_CATALOG_ID = "-catalog_id"
-    DESC_CREATED_AT = "-created_at"
-    DESC_UPDATED_AT = "-updated_at"
 
 
 class Job(AwareDatetimesMixin, BaseModel):
@@ -144,25 +115,6 @@ class Provider(AwareTimestampsMixin, BaseModel):
     configuration: dict[str, Any]
     status: constants.StatusEnum
     job: Job | None
-
-
-class ProviderOrderChoices(OrderChoices):
-    """Choices for ordering providers."""
-
-    ID = "id"
-    CLASS_UID = "class_uid"
-    NOTE = "note"
-    CONFIGURATION = "configuration"
-    STATUS = "status"
-    CREATED_AT = "created_at"
-    UPDATED_AT = "updated_at"
-    DESC_ID = "-id"
-    DESC_CLASS_UID = "-class_uid"
-    DESC_NOTE = "-note"
-    DESC_CONFIGURATION = "-configuration"
-    DESC_STATUS = "-status"
-    DESC_CREATED_AT = "-created_at"
-    DESC_UPDATED_AT = "-updated_at"
 
 
 class FullProvider(Provider):

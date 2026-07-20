@@ -20,17 +20,17 @@
 from urllib.parse import urljoin
 
 import pytest
-from httpx import Client
 
+from cata_log_hub import database
 from cata_log_hub.api import common
-from cata_log_hub.api.v1 import models
+from cata_log_hub.api.v1 import filters
 
 
 @pytest.mark.parametrize(
     "order",
-    [item.value for item in models.PageOrderChoices],
+    [field.key for field in database.Page.__table__.columns.values()],
 )
-def test_list_pages(full_database, fake_page, client, order):
+def test_list_pages__order(full_database, fake_page, client, order):
     response = client.get("/api/v1/pages", params={"order": order})
 
     assert response.status_code == 200
@@ -41,6 +41,22 @@ def test_list_pages(full_database, fake_page, client, order):
     assert data["results"][0]["id"] == fake_page.id
     assert data["results"][0]["catalog_id"] == fake_page.catalog_id
     assert data["results"][0]["number"] == fake_page.number
+
+
+@pytest.mark.parametrize(
+    ("query_key"),
+    [
+        field
+        for field in filters.PageFilter.model_fields
+        if field not in ["order", "search"]
+    ],
+)
+def test_list_pages__filter(full_database, fake_page, client, query_key):
+    response = client.get("/api/v1/pages", params={query_key: "1"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "results" in data
 
 
 def test_list_pages__noauth(full_database, noauth_client):

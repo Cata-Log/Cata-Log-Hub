@@ -70,7 +70,8 @@ This works fine but has some deficits in terms of concurrency and thread-safety.
 
 If you can, please follow the next steps to use an external full-fledged database server instead.
 
-You can pass the URL of a database either by command-line or environment option to be used instead of the internal sqlite database.
+You can pass set the URL of a database to be used instead of the internal sqlite database
+with the `external_database_url` CLI or `CATA_LOG_EXTERNAL_DATABASE_URL` environment setting.
 
 .. note::
 
@@ -114,7 +115,7 @@ Available options are:
 
     Make sure to use the complete protocol with the driver as given in these templates.
 
-You can use the docker-compose files for both setups as reference.
+There are docker-compose templates for both setups in `the repo <https://gitlab.com/cata-log/cata-log-hub/-/blob/main/docker/>`_.
 
 Reverse-Proxy
 ^^^^^^^^^^^^^
@@ -163,6 +164,6 @@ For more details, see `the fastapi docs on this subject <https://fastapi.tiangol
 Settings
 ^^^^^^^^
 
-Your instance can be configured in many individual settings.
+Your instance can be configured with various individual settings.
 
 Refer to :doc:`the configuration page <configuration>` for all details.

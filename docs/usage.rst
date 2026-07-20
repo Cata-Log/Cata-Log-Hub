@@ -9,9 +9,10 @@ Before we get into details on how Cata-Log works, we have to get the wording str
 - Catalog: Collective term for any type of digital print product meant to advertise store offers and price reductions. This includes flyers, weekly ads, etc.
 - Store: Publisher of at least one catalog. Typically large store chains that offer digital catalogs.
 - Provider: Source of a single catalog. There can be more than one provider per store.
-    For instance, a store may offer one catalog for current offers and a catalog for offers in the next week.
-    Each of these catalogs is considered to have their own provider.
-    Providers for catalogs that concern the future are often distinguished by the suffix -preview.
+  For instance, a store may offer one catalog for current offers and a catalog for offers in the next week.
+  Each of these catalogs is considered to have their own provider.
+  Providers for catalogs that concern the future are often distinguished by the suffix -preview.
+- Page: A single page in a flyer.
 
 Concept
 -------
@@ -32,14 +33,14 @@ Users interact with the frontend which can be further divided into four subsecti
 Webinterface
 ^^^^^^^^^^^^
 
-This webinterface, located at the URL root is meant for simple and user-friendly management of providers and their configuration.
+This webinterface, located at the URL root */* is meant for simple and user-friendly management of providers and their configuration.
 It does not offer all capablities of the API.
 
 API
 ^^^
 
-All data is available through the API endpoints.
-Its complete documentation can be found at */docs/swagger* and */docs/redoc* .
+All data is available through Cata-Log-Hub's API.
+Its complete documentation can be found at */docs/swagger* and */docs/redoc*.
 
 Static Files
 ^^^^^^^^^^^^
@@ -56,6 +57,17 @@ To allow reading the cached catalogs with an e-reader device, a complete OPDS ca
 Use it to browse providers and their catalogs.
 These endpoints only read data.
 
+Authentication
+--------------
+
+To be able to access the server of course you need to authenticate first.
+
+Cata-Log-Hub uses HTTP Basic Authentication.
+
+This means that in the webpages the browser will prompt you with a login dialog.
+
+When using the API via `curl <curl.se>`_, you can authencate with the *-u* CLI option.
+
 Setting up your providers
 -------------------------
 
@@ -65,7 +77,7 @@ Every provider is preconfigured as much as possible, including its caching sched
 The only configuration that is still required are the ones that can't decided for you during development.
 In most cases these configurations define your local branch or region of the store and provider.
 
-You can decide between using the API or API schema docs to create individual providers or the webinterface which offers a more user-friendly experience.
+You can decide between using the API to create individual providers or the webinterface which offers a more user-friendly experience.
 
 After a provider is created, its catalog will be cached right away. That may take a few moments.
 
@@ -93,3 +105,36 @@ Every single page of a catalog is made available in three different ways
 - static file (*/static/pages/{page_filename}*)
 
 All pages are stored in webp format for modern compression and generally smaller sizes.
+
+
+Integrations
+------------
+
+Through its API, data collected by Cata-Log can very easily be used in third-party applications.
+
+This is an incomplete list of such integrations
+
+Searxng
+^^^^^^^
+
+You can add an engine for Cata-Log with the config
+
+.. code-block:: text
+- name: cata-log
+  engine: json_engine
+  paging: True
+  first_page_num: 0
+  search_url: http://<your_ip>/api/v1/catalogs/latest?search={query}&page={pageno}
+  results_query: results
+  url_query: id
+  url_prefix: http://<your_ip>/catalogs/latest
+  title_query:
+  content_query:
+  headers:
+    HTTPBasic: <username>:<password>
+  about:
+    website: https://<your_ip>/
+    official_api_documentation: https://<your_ip>/docs/
+    use_official_api: true
+    require_api_key: false
+    results: JSON

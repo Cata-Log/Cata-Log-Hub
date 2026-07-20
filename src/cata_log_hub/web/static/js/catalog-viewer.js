@@ -1,7 +1,7 @@
 const provider_id = document.getElementById("provider-id").dataset.id;
 
 class Page {
-  url = `/api/v1/providers/${provider_id}/catalogs/latest/pages/{page_number}/embed`;
+  url = `${root_url}/api/v1/providers/${provider_id}/catalogs/latest/pages/{page_number}/embed`;
 
   constructor(number) {
     this.number = number;

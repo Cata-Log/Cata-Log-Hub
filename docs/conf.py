@@ -211,6 +211,10 @@ todo_include_todos = True
 todo_emit_warnings = False
 todo_link_only = False
 
+# -- Autosectionlabel configuration  ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autosectionlabel.html#configuration
+
+autosectionlabel_prefix_document = True
 
 # -- Coverage configuration  ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html#configuration

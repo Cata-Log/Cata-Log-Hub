@@ -4,8 +4,13 @@ from pydantic import Field
 
 from cata_log_hub.exceptions import PagesExhausted, CatalogUnavailableWarning
 
+### imports for a builtin provider
 from .base import Provider, Preview
 from .regions import
+
+### imports for a plugin
+# from cata_log_hub.providers.base import Provider, Preview
+# from cata_log_hub.providers.regions import
 
 # Import some useful helpers. Remove what you don't need.
 import calendar
@@ -109,8 +114,6 @@ class TemplateProvider(Provider):
 # you can simply inherit from the current flyer's provider class and override just what needs to be adapted.
 
 class TemplatePreviewProvider(Preview, TemplateProvider):
-    # Override the methods that are different for the preview flyer.
-    #
     # See netto.py for an example of a provider with both preview and retrospect provider classes.
     uid = # Set a uid for the preview
     name = # A proper name for the preview
@@ -119,3 +122,5 @@ class TemplatePreviewProvider(Preview, TemplateProvider):
     @override
     def _get_preview_timedelta(self):
         # Compute and return the timedelta that the preview is ahead of the regular flyer release schedule.
+
+    # Override the methods that are different for the preview flyer here.

@@ -1,7 +1,7 @@
 document.getElementById("provider-form").addEventListener("submit", (event) => {
   event.preventDefault();
   form = new FormData(event.target);
-  request = new Request("/api/v1/providers", {
+  request = new Request(`${root_url}/api/v1/providers`, {
     method: "POST",
     headers: new Headers({
       "Content-Type": "application/json",

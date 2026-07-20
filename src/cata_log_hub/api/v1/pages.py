@@ -16,16 +16,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Path, Query, status
 from fastapi.responses import FileResponse
+from fastapi_filter.base.filter import FilterDepends
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import select
 
 from cata_log_hub import database
 from cata_log_hub.api import common
+from cata_log_hub.api.v1.filters import PageFilter
 
 from . import models
 from .pagination import PaginationPage
@@ -39,19 +41,15 @@ router = APIRouter(prefix="/pages", tags=["pages"])
     operation_id="list-pages-v1",
 )
 def list_pages(
-    order: Annotated[
-        list[models.PageOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.PageOrderChoices.DESC_CATALOG_ID,
-        models.PageOrderChoices.NUMBER,
-    ],
+    page_filter: PageFilter = FilterDepends(PageFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Page]:
     """List all pages."""
     return paginate(
-        db_session.query(database.Page).order_by(
-            *[order_param.sql(database.Page) for order_param in order]
-        )
+        db_session,
+        page_filter.sort(
+            page_filter.filter(select(database.Page).outerjoin(database.PageFile))
+        ),
     )
 
 

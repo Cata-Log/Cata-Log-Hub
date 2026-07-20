@@ -9,22 +9,19 @@ How To Add A New Provider
 
 To add a new provider you need to implement a new provider class.
 
-There is a template in :doc:`the *docs/template-provider.py* file <template-provider>`. It also contains a lot of explanations.
+There is a template in :doc:`the docs/template-provider.py file <template-provider>`. It also contains a lot of explanations.
 
 Here we give a quick rundown of what you need to do, while implementing an example provider.
 
 Implementation Details and Example
 ----------------------------------
 
-1. Add a file <your-provider>.py to src/cata_log/providers (or copy the template there).
-2. In that file define a class <YourProvider> that inherits from the Provider baseclass
-
 Basics
 ^^^^^^
 
-Add a file <your-provider>.py to src/cata_log/providers (or copy the template there).
+Add a file *<your-provider>.py* to *src/cata_log_hub/providers* (or copy :doc:`the template <template-provider>` there).
 
-In that file define a class <YourProvider> that inherits from the Provider baseclass
+In that file define a class *<YourProvider>* that inherits from :doc:`the Provider baseclass <apidoc-rst/cata_log_hub/cata_log_hub.providers.base>`.
 
 .. code-block:: python
 
@@ -38,18 +35,18 @@ Define Metadata
 Now metadata needs to be added to the class. That data can either be obvious (e.g. the provider's region) or can depend on the way you intend to scrape the provider's api.
 The following datapoints must be added as class variables to your provider class:
 
-- uid: A unique identifier for this provider class. Ideally consists of unique combination of attributes of the class (e.g. name + regioncode).
-- name: The user-facing name of the provider.
-- description: A description of the provider and the flyer that makes it possible for users to identify it.
-- url: A URL to the provider's digital flyer webpage.
-- region: The region the flyer is distributed in. If the region is missing, adding it is very straightforward. Just check out and follow :doc:`the how-to-add-regions guide <how-to-add-region>`.
+- ``uid``: A unique identifier for this provider class. Ideally consists of unique combination of attributes of the class (e.g. name + regioncode).
+- ``name``: The user-facing name of the provider.
+- ``description``: A description of the provider and the flyer that makes it possible for users to identify it.
+- ``url``: A URL to the provider's digital flyer webpage.
+- ``region``: The region the flyer is distributed in. If the region is missing, adding it is very straightforward. Just check out and follow :doc:`the how-to-add-regions guide <how-to-add-region>`.
 
 
 All other datapoints must only be added if they differ from the defaults:
 
-- first_page_number (``1``): The number of the first page of a flyer in the provider's publicly accessible data.
-- schedule (``0 4 * * *``): A crontab string defining the caching schedule. For more details on the crontab syntax, see `the wikipedia page <https://en.wikipedia.org/wiki/Cron>`_.
-- jitter (``3600``): The maximum number of seconds that the caching schedule is randomly delayed. This is relevant to reduce load on the provider's server infrastructure.
+- ``first_page_number`` (``1``): The number of the first page of a flyer in the provider's publicly accessible data.
+- ``schedule`` (``0 4 * * *``): A crontab string defining the caching schedule. For more details on the crontab syntax, see `the wikipedia page <https://en.wikipedia.org/wiki/Cron>`_. The default is to cache every day at 4:00 am.
+- ``jitter`` (``3600``): The maximum number of seconds that the caching schedule is randomly delayed. This is relevant to reduce load on the issuer's server infrastructure.
 
 For our example provider this could be
 
@@ -108,9 +105,9 @@ Define essential methods
 The Provider baseclass is abstract, meaning you must implement at least four of its methods.
 To make this as easy as possible, the base class provides a couple of variables and wraps the code you write.
 
-- _client: A HTTP client instance that you should use to make requests to the provider's servers.
-- _relevant_datetime: The datetime identifying the flyer.
-- _configuration: An instance of the configuration class with the values given by the user.
+- ``_client``: A HTTP client instance that you should use to make requests to the provider's servers.
+- ``_relevant_datetime``: The datetime identifying the flyer.
+- ``_configuration``: An instance of the configuration class with the values given by the user.
 
 **You do not have to worry about handling errors. The base class will take care of that.**
 You only need to catch and handle expected errors, you will see what that means as we continue with the example.
@@ -123,7 +120,7 @@ This allows you to get data from the provider which is needed to access the page
 For example, our providers offer an endpoint to download a json file with the URLs to all currently available flyers and their pages.
 This file's URL contains the store_id that the user needs to set in the configuration and the current year.
 
-The json data can then be retrieved and stored in an instance variable to access it in the _get_page method.
+The json data can then be retrieved and stored in an instance variable to access it in the ``_get_page`` method.
 
 .. code-block:: python
 
@@ -152,8 +149,8 @@ The rule is simple: If the page to the page_number argument does not exist, you 
 
 There are some fallbacks to make this even more simple:
 If you make a HTTP request for page data and that page doesn't exist, the provider's server will most likely respond with status 404.
-You do not need to handle this yourself. If a status 404 error occurs in _get_page,
-is is assumed that the page doesn't exist as long as the number of the page is not the first page number as defined earlier.
+You do not need to handle this yourself. If a status 404 error occurs in ``_get_page``,
+is is assumed that the page doesn't exist as long as the number of the page is not the ``first_page_number`` as defined earlier.
 
 .. code-block:: python
 
@@ -200,9 +197,10 @@ One way to do this concisely is to use the `modulus <https://wikipedia.com/en/mo
                 self._relevant_datetime.tzinfo, # set the timezone of the relevant datetime
             )
 
-Some providers include the flyer validity timestamps in the data fetched with _get_catalog_data.
+Some providers include the flyer validity timestamps in the data fetched with ``_get_catalog_data``.
 Of course it is recommended to use these if available.
-Be careful when working with naive datetimes. If _get_valid_since returns a naive datetime, the provider regional timezone is set to make it aware.
+
+Be careful when working with naive datetimes. If ``_get_valid_since`` returns a naive datetime, the provider regional timezone is set to make it aware.
 If that is not correct, you need to handle the timezone yourself.
 Make sure to use replace(tzinfo=...) and not astimezone, as the latter will perform a conversion from the machines local timezone, which is almost always incorrect.
 
@@ -223,7 +221,7 @@ In our example the flyer always becomes valid on a wednesday so the offers also 
     def _get_valid_until(self):
         return self._get_valid_since() + timedelta(days=7)
 
-This timestamp can also be retrieved in _get_catalog_data, see the remarks on _get_valid_since.
+This timestamp can also be retrieved in ``_get_catalog_data``, see the remarks on ``_get_valid_since``.
 
 Define auxiliary methods
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -239,7 +237,7 @@ This is the place to do it.
 Preview mixin
 ^^^^^^^^^^^^^
 
-If the provider's catalog is a preview, you can include the Preview mixin to manage the time shift between the datetimes.
+If the provider's catalog is a preview, you can include :doc:`the Preview mixin <apidoc-rst/cata_log_hub/cata_log_hub.providers.base>` to manage the time shift between the datetimes.
 
 Typically, digital preview flyers follow the same or similar logic as their current catalogs analogs.
 By using the mixin you only change the datetimes to match the timeframe of the preview and preserve the other behaviour.
@@ -247,7 +245,7 @@ By using the mixin you only change the datetimes to match the timeframe of the p
 In many cases, the digital flyer URLs contain the year and calendar-week number of the week in which the flyer is valid.
 For example: *https://other_provider.com/catalogs/2026_week41/pages/1.jpg*
 
-To be able to format this string to get the preview flyer, _relevant_datetime needs to be shifted.
+To be able to format this string to get the preview flyer, ``_relevant_datetime`` needs to be shifted.
 E.g. if you want to implement a flyer preview of a flyer with a weekly schedule, you need the relevant datetime to be in the next week, not the current one.
 
 .. code-block:: python
@@ -263,13 +261,15 @@ Note the order of inheritance, the mixin must come first.
 You can then manage the time difference between the timeframe of the current and preview catalog
 using the ``_get_preview_timedelta`` method.
 
+Typically for a weekly flyer like our example, the timeshift is one week.
+
 .. code-block:: python
 
     class ExampleProvider(Preview, Provider):
 
         @override
         def _get_preview_timedelta(self):
-            return
+            return timedelta(weeks=1)
 
 
 Complete Example
@@ -339,7 +339,7 @@ Putting all the pieces of the example together we get
 
         @override
         def get_preview_timedelta(self):
-           return timedelta(days=7)
+           return timedelta(weeks=1)
 
 
 Further Reading
@@ -347,10 +347,10 @@ Further Reading
 
 For more exemplary implementations, you can check the source code of existing and stable provider classes.
 
-- *norma.py* implements provider classes that don't need to get any catalog data.
-- *lidl.py* gets the valdiity timestamps from the catalog data json.
-- *penny.py* extracts the flyer pages from the flyer pdf download as the provider API is too obscure.
-- The provider classes in *aldi_sued.py* look a lot like what we coded as an example.
+- :doc:`norma.py <apidoc-rst/cata_log_hub/cata_log_hub.providers.norma>` implements provider classes that don't need to get any catalog data.
+- :doc:`lidl.py <apidoc-rst/cata_log_hub/cata_log_hub.providers.lidl>` gets the valdiity timestamps from the catalog data json.
+- :doc:`penny.py <apidoc-rst/cata_log_hub/cata_log_hub.providers.penny>` extracts the flyer pages from the flyer pdf download as the provider API is too obscure.
+- The provider classes in :doc:`aldi_sued.py <apidoc-rst/cata_log_hub/cata_log_hub.providers.aldi_sued>` look a lot like what we coded as an example.
 
 Next Steps
 ----------
@@ -364,6 +364,7 @@ Now to check your code into the main repository, a few more steps have to be tak
 
     This will fix small obvious code quality problems and give you a list of other remaining issues.
     All linting rules are `fully documented <https://astral.sh/ruff/rules/>`_.
+
     If there's something you are not sure how to fix, just leave it as is.
     It can be taken care of in the process of reviewing the merge request.
 
@@ -383,6 +384,6 @@ Now to check your code into the main repository, a few more steps have to be tak
 
         python3 -m cata_log_hub --password=passwd
 
-    Now you can test your provider class in action by adding a provider with its class_uid and running the caching task.
+    Now you can test your provider class in action by adding a provider with its ``class_uid`` and running the caching task.
 
 4. Commit and make a merge request using the *New Provider* template. Done!

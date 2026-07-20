@@ -111,6 +111,10 @@ parametrize-values-type = "list"
 "/**/providers/**" = [  # ignores for all provider files
   "D106",     # no docstrings for classes required
 ]
+"/**/api/**" = [  # ignores for api code
+    "B008",     # inline calls are common in fastapi
+    "RUF012",   # mutable defaults common in fastapi
+]
 "/**/test/**" = [  # ignores for all test files
   "ARG001", # unused args required for fixture usage
   "SLF001", # private accessed

@@ -23,14 +23,17 @@ from apscheduler.job import Job as SchedulerJob
 from apscheduler.triggers.date import DateTrigger
 from fastapi import APIRouter, HTTPException, Path, Query, responses, status
 from fastapi.exceptions import RequestValidationError
+from fastapi_filter.base.filter import FilterDepends
 from fastapi_pagination import paginate as paginate_list
 from fastapi_pagination.ext.sqlalchemy import paginate
 from pydantic import ValidationError
 from pydantic.types import NonNegativeInt, StringConstraints
 from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.sql import select
 
 from cata_log_hub import database
 from cata_log_hub.api import common
+from cata_log_hub.api.v1.filters import CatalogFilter, PageFilter, ProviderFilter
 from cata_log_hub.exceptions import (
     ProviderUnknownClassWarning,
 )
@@ -48,22 +51,21 @@ router = APIRouter(prefix="/providers", tags=["providers"])
     "", response_model=PaginationPage[models.Provider], operation_id="list-providers-v1"
 )
 def list_providers(
-    order: Annotated[
-        list[models.ProviderOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.ProviderOrderChoices.CLASS_UID
-    ],
+    provider_filter: ProviderFilter = FilterDepends(ProviderFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Provider]:
     """List all providers."""
     return paginate(
-        db_session.query(database.Provider)
-        .options(
-            selectinload(database.Provider.catalogs).selectinload(
-                database.Catalog.pages
+        db_session,
+        provider_filter.sort(
+            provider_filter.filter(
+                select(database.Provider).options(
+                    selectinload(database.Provider.catalogs).selectinload(
+                        database.Catalog.pages
+                    )
+                )
             )
-        )
-        .order_by(*[order_param.sql(database.Provider) for order_param in order])
+        ),
     )
 
 
@@ -73,7 +75,7 @@ def list_providers(
     operation_id="list-available-providers-v1",
 )
 def list_available_providers(
-    query: Annotated[
+    search: Annotated[
         str | None,
         StringConstraints(strip_whitespace=True, to_lower=True),
         "Filter by text (case-insensitive)",
@@ -89,13 +91,13 @@ def list_available_providers(
         [
             catalog_class
             for catalog_class in ProviderType.get_classes()
-            if (not query and not region)
+            if (not search and not region)
             or (region and region in catalog_class.region.local_name.lower())
             or (
-                query
+                search
                 and (
-                    query in catalog_class.uid.lower()
-                    or query in catalog_class.description.lower()
+                    search in catalog_class.uid.lower()
+                    or search in catalog_class.description.lower()
                 )
             )
         ]
@@ -291,19 +293,19 @@ def delete_provider(
 )
 def list_provider_catalogs(
     provider_id: Annotated[int, Path(description="ID of the provider")],
-    order: Annotated[
-        list[models.CatalogOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all catalogs of a provider."""
     return paginate(
-        db_session.query(database.Catalog)
-        .options(selectinload(database.Catalog.pages))
-        .filter(database.Catalog.provider_id == provider_id)
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .options(selectinload(database.Catalog.pages))
+                .filter(database.Catalog.provider_id == provider_id)
+            )
+        ),
     )
 
 
@@ -398,21 +400,20 @@ def embed_latest_provider_catalog(
 )
 def list_latest_provider_catalog_pages(
     provider_id: Annotated[int, Path(description="ID of the provider")],
-    order: Annotated[
-        list[models.PageOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.PageOrderChoices.NUMBER
-    ],
+    page_filter: PageFilter = FilterDepends(PageFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Page]:
     """Get the pages of the latest catalog of a provider."""
-
     return paginate(
-        db_session.query(database.Page)
-        .filter(
-            database.Page.catalog_id == latest_provider_catalog_id_subquery(provider_id)
-        )
-        .order_by(*[order_param.sql(database.Page) for order_param in order])
+        db_session,
+        page_filter.sort(
+            page_filter.filter(
+                select(database.Page).filter(
+                    database.Page.catalog_id
+                    == latest_provider_catalog_id_subquery(provider_id)
+                )
+            )
+        ),
     )
 
 
@@ -515,22 +516,22 @@ def embed_latest_provider_catalog_page(
 )
 def list_provider_current_catalogs(
     provider_id: Annotated[int, Path(description="ID of the provider")],
-    order: Annotated[
-        list[models.CatalogOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all current catalogs of a provider."""
     now = datetime.now(tz=UTC)
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.provider_id == provider_id)
-        .filter(database.Catalog.valid_since <= now)
-        .filter(database.Catalog.valid_until > now)
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.provider_id == provider_id)
+                .filter(database.Catalog.valid_since <= now)
+                .filter(database.Catalog.valid_until > now)
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -541,20 +542,20 @@ def list_provider_current_catalogs(
 )
 def list_provider_preview_catalogs(
     provider_id: Annotated[int, Path(description="ID of the provider")],
-    order: Annotated[
-        list[models.CatalogOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all preview catalogs of a provider."""
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.provider_id == provider_id)
-        .filter(database.Catalog.valid_since >= datetime.now(tz=UTC))
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.provider_id == provider_id)
+                .filter(database.Catalog.valid_since >= datetime.now(tz=UTC))
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 
@@ -565,20 +566,20 @@ def list_provider_preview_catalogs(
 )
 def list_provider_outdated_catalogs(
     provider_id: Annotated[int, Path(description="ID of the provider")],
-    order: Annotated[
-        list[models.CatalogOrderChoices], Query(description="Fields to order by")
-    ] = [  # noqa: B006 # no alternative in fastapi, not altered after declaration
-        models.CatalogOrderChoices.DESC_CREATED_AT
-    ],
+    catalog_filter: CatalogFilter = FilterDepends(CatalogFilter),
     db_session: Session = database.depends_db_session,
 ) -> PaginationPage[database.Catalog]:
     """List all outdated catalogs of a provider."""
     return paginate(
-        db_session.query(database.Catalog)
-        .filter(database.Catalog.provider_id == provider_id)
-        .filter(database.Catalog.valid_until < datetime.now(tz=UTC))
-        .options(selectinload(database.Catalog.pages))
-        .order_by(*[order_param.sql(database.Catalog) for order_param in order])
+        db_session,
+        catalog_filter.sort(
+            catalog_filter.filter(
+                select(database.Catalog)
+                .filter(database.Catalog.provider_id == provider_id)
+                .filter(database.Catalog.valid_until < datetime.now(tz=UTC))
+                .options(selectinload(database.Catalog.pages))
+            )
+        ),
     )
 
 

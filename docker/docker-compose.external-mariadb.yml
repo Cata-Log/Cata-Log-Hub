@@ -3,7 +3,7 @@ services:
     image: mariadb:latest
     container_name: cata-log-db
     volumes:
-      - /path/to/cata-log-hub/mysql:/var/lib/mysql
+      - cata-log-db-data:/var/lib/mysql
     environment:
       - MARIADB_DATABASE=cata-log # must match cata-log-hub:DATABASE_NAME
       - MARIADB_USER=user # must match cata-log-hub:DATABASE_USER
@@ -22,15 +22,23 @@ services:
     image: cata-log-hub:latest
     container_name: cata-log
     volumes:
-      - /path/to/cata-log-hub/storage:/mnt/storage
-      - /path/to/cata-log-hub/log:/var/log/cata-log
-      - /path/to/cata-log-hub/plugins:/mnt/plugins
+      - cata-log-storage:/mnt/storage
+      - cata-log-logs:/var/log/cata-log
+      - cata-log-plugins:/mnt/plugins
     ports:
       - 2424:8000
     environment:
       - CATA_LOG_PASSWORD=testwithdb1234 # gitleaks:allow
+      - CATA_LOG_ALLOWED_HOSTS=["127.0.0.1","localhost", "0.0.0.0"] # hostnames that are allowed to serve this instance, must include 0.0.0.0 for healthcheck to work
       - CATA_LOG_EXTERNAL_DATABASE_URL=mysql+pymysql://user:db_passwd@db/cata-log
+      - CATA_LOG_ALLOWED_HOSTS="127.0.0.1,localhost" # add your hostname here
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  cata-log-storage:
+  cata-log-db-data:
+  cata-log-logs:
+  cata-log-plugins:

@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 0.2.1
+
+Features:
+
+- filters for api
+
+Fixes:
+
+- various issues related to proxying under custom location
+
 ## Version 0.2.0
 
 Breaking changes:

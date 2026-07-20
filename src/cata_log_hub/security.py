@@ -51,9 +51,10 @@ def verify_credentials(
         request: The request that needs to be authenticated.
         credentials: The user-given credentials.
     """
-    if get_settings().public_get and request.method == "GET":
+    settings = get_settings()
+    if settings.public_get and request.method == "GET":
         return
-    if request.url.path in UNPROTECTED_PATHS:
+    if request.url.path.removeprefix(settings.root_path) in UNPROTECTED_PATHS:
         return
     username, password = get_credentials()
     if (

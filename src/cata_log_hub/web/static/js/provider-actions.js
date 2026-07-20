@@ -1,7 +1,7 @@
 document.querySelectorAll(".delete-provider-button").forEach((deleteButton) => {
   deleteButton.addEventListener("click", (event) => {
     provider_id = event.target.dataset.id;
-    deleteRequest = new Request(`/api/v1/providers/${provider_id}`, {
+    deleteRequest = new Request(`${root_url}/api/v1/providers/${provider_id}`, {
       method: "DELETE",
     });
     fetch(deleteRequest)
@@ -20,7 +20,7 @@ document
   .forEach((updateButton) => {
     updateButton.addEventListener("click", (event) => {
       provider_id = event.target.dataset.id;
-      updateRequest = new Request(`/api/v1/providers/${provider_id}/job/run`, {
+      updateRequest = new Request(`${root_url}/api/v1/providers/${provider_id}/job/run`, {
         method: "POST",
       });
       fetch(updateRequest)
@@ -41,7 +41,7 @@ document.querySelectorAll(".provider-job-switch").forEach((jobSwitch) => {
   jobSwitch.addEventListener("change", (event) => {
     provider_id = event.target.dataset.id;
     endpoint = toggleRequest = new Request(
-      `/api/v1/providers/${provider_id}/job`,
+      `${root_url}/api/v1/providers/${provider_id}/job`,
       {
         method: event.target.checked ? "POST" : "DELETE",
       },

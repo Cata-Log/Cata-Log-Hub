@@ -1,6 +1,6 @@
 services:
   cata-log-hub:
-    image: cata-log-hub:latest
+    image: dacid99/cata-log-hub:latest
     container_name: cata-log
     volumes:
       - cata-log-storage:/mnt/storage

@@ -50,6 +50,7 @@ from .penny import Penny, PennyPreview
 from .plugins import load_plugins
 from .rewe import Rewe, RewePreview
 from .rossmann import RossmannAktion, RossmannBeilage
+from .thomas_philipps import ThomasPhilipps, ThomasPhilippsPreview
 
 __all__ = [
     "Action",
@@ -85,6 +86,8 @@ __all__ = [
     "RewePreview",
     "RossmannAktion",
     "RossmannBeilage",
+    "ThomasPhilipps",
+    "ThomasPhilippsPreview",
 ]
 
 load_plugins()
